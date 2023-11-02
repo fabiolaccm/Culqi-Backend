@@ -1,0 +1,131 @@
+swagger: "2.0"
+info:
+  description: "Microservicio de tokenización de tarjetas"
+  version: "1.0.0"
+  title: "Tokenización de tarjetas"
+host: "localhost:8080"  # Agrega el host correcto
+basePath: "/v1"
+tags:
+  - name: "card"
+    description: "Tokenización"
+schemes:
+  - "http"
+paths:
+  /login:
+    post:
+      tags:
+        - "login"
+      summary: "Login usuario"
+      description: "Endpoint para autenticar usuarios"
+      operationId: "login"
+      consumes:
+        - "application/json"
+      produces:
+        - "application/json"
+      parameters:
+        - in: "body"
+          name: "body"
+          required: true
+          schema:
+            $ref: "#/definitions/LoginReqDto"
+      responses:
+        "200":
+          description: "Operación exitosa"
+        "405":
+          description: "Entrada inválida"
+  /tokens:
+    post:
+      tags:
+        - "card"
+      summary: "Registrar una tokenización de tarjeta"
+      description: "Endpoint para registrar una tarjeta"
+      operationId: "addCard"
+      consumes:
+        - "application/json"
+      produces:
+        - "application/json"
+      parameters:
+        - in: "header"
+          name: "commerce-identifier"
+          type: "string"
+          required: true
+        - in: "body"
+          name: "body"
+          required: true
+          schema:
+            $ref: "#/definitions/CardReqDto"
+      responses:
+        "200":
+          description: "Operación exitosa"
+        "405":
+          description: "Entrada inválida"
+
+  /tokens/card-info:
+    get:
+      tags:
+        - "card"
+      summary: "Obtener datos de la tarjeta"
+      operationId: "getCardInfo"
+      produces:
+        - "application/json"
+      parameters:
+        - in: "header"
+          name: "commerce-identifier"
+          type: "string"
+          required: true
+        - in: "header"
+          name: "Authorization"
+          type: "string"
+          required: true
+      responses:
+        "200":
+          description: "Operación exitosa"
+          schema:
+            $ref: "#/definitions/CardResDto"
+        "400":
+          description: "Valor de estado inválido"
+        "401":
+          description: "No autorizado"
+
+definitions:
+  CardReqDto:
+    type: "object"
+    properties:
+      email:
+        type: "string"
+      card_number:
+        type: "string"
+      cvv:
+        type: "string"
+      expiration_year:
+        type: "string"
+      expiration_month:
+        type: "string"
+  CardResDto:
+    type: "object"
+    properties:
+      email:
+        type: "string"
+      card_number:
+        type: "string"
+      expiration_year:
+        type: "string"
+      expiration_month:
+        type: "string"
+  LoginReqDto:
+    type: "object"
+    properties:
+      user:
+        type: "string"
+      password:
+        type: "string"       
+  ApiResponse:
+    type: "object"
+    properties:
+      code:
+        type: "integer"
+        format: "int32"
+      type:
+        type: "string"
+      message:
+        type: "string"
